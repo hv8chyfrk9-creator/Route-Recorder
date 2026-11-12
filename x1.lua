@@ -31,8 +31,10 @@ ScreenGui.Parent = playerGui
 -- ==========================================
 -- ESTADO
 -- ==========================================
+-- points[i] = { cf, kind, waitSec, marker, label, line, distLabel }
+-- kind: "normal" | "plant" | "wait" | "jump"
 local points = {}
-local undoStack = {}
+local undoStack = {} -- snapshots of points (cf+kind+wait only)
 local redoStack = {}
 local lastRecordPos = nil
 local autoMode = false
@@ -47,15 +49,17 @@ local lastTimedRecord = 0
 local previewMarker = nil
 local testing = false
 local testSpeed = 220
-local testMode = "normal"
+local testMode = "normal" -- normal min0, fast min50, ultra min150
 local noclipTest = false
 local saveFile = "RouteRecorder_Routes.json"
-local metaFile = "RouteRecorder_Meta.json"
+local metaFile = "RouteRecorder_Meta.json" -- WinBlocks + anti-lag (archivo aparte)
 local autoSaveEvery = 5
 local pointsSinceSave = 0
 local currentPointKind = "normal"
 local currentWaitSec = 0.25
+-- Modos de recorrido a los que pertenece el proximo punto (y los que se graben)
 local currentModes = { normal = true, fast = true, super = true }
+-- refs del panel flotante (se asignan al crear el panel; forward-declare para sync)
 local qModeN, qModeF, qModeS
 
 local function modesCopy(m)
