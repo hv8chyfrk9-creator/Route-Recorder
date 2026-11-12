@@ -1,5 +1,6 @@
 Route Recorder v2.2
-===================
+
+Loadstring:
 loadstring(game:HttpGet("https://raw.githubusercontent.com/hv8chyfrk9-creator/Route-Recorder/main/route_recorder.lua"))()
 
-Parts: x1.lua ... x24.lua (plain Lua, concatenated by the loader)
+6 partes: rr1.lua ... rr6.lua
