@@ -1,0 +1,2 @@
+Usa el archivo route_recorder_v22.lua del chat (pegar completo en Delta).
+El loadstring de GitHub todavia no tiene el archivo completo subido.
