@@ -3,7 +3,6 @@
 -- PlayerGui | Delta Executor | Movil
 -- ==========================================
 
-print("[Route Recorder] cargando v2.2 ...")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -31,10 +30,8 @@ ScreenGui.Parent = playerGui
 -- ==========================================
 -- ESTADO
 -- ==========================================
--- points[i] = { cf, kind, waitSec, marker, label, line, distLabel }
--- kind: "normal" | "plant" | "wait" | "jump"
 local points = {}
-local undoStack = {} -- snapshots of points (cf+kind+wait only)
+local undoStack = {}
 local redoStack = {}
 local lastRecordPos = nil
 local autoMode = false
@@ -49,26 +46,19 @@ local lastTimedRecord = 0
 local previewMarker = nil
 local testing = false
 local testSpeed = 220
-local testMode = "normal" -- normal min0, fast min50, ultra min150
+local testMode = "normal"
 local noclipTest = false
 local saveFile = "RouteRecorder_Routes.json"
-local metaFile = "RouteRecorder_Meta.json" -- WinBlocks + anti-lag (archivo aparte)
 local autoSaveEvery = 5
 local pointsSinceSave = 0
 local currentPointKind = "normal"
 local currentWaitSec = 0.25
--- Modos de recorrido a los que pertenece el proximo punto (y los que se graben)
 local currentModes = { normal = true, fast = true, super = true }
--- refs del panel flotante (se asignan al crear el panel; forward-declare para sync)
 local qModeN, qModeF, qModeS
 
 local function modesCopy(m)
 	m = m or currentModes
-	return {
-		normal = m.normal and true or false,
-		fast = m.fast and true or false,
-		super = m.super and true or false,
-	}
+	return { normal = m.normal and true or false, fast = m.fast and true or false, super = m.super and true or false }
 end
 
 local function modesLabel(m)
@@ -84,16 +74,14 @@ end
 local function pointInMode(p, mode)
 	if not p then return false end
 	local m = p.modes
-	if not m then return true end -- compat: sin tags = todos
+	if not m then return true end
 	if mode == "normal" then return m.normal end
 	if mode == "fast" then return m.fast end
 	if mode == "ultra" or mode == "super" then return m.super end
 	return m.normal
 end
 
--- WinBlocks registrados: { real = "WinBlock10", display = "+50K Wins", order = 10 }
 local winBlocks = {}
--- Cleanup names / prefixes
 local cleanupExact = {}
 local cleanupPrefix = {}
 
@@ -116,12 +104,7 @@ end
 local function deepCopyPoints()
 	local t = {}
 	for i, p in ipairs(points) do
-		t[i] = {
-			cf = p.cf,
-			kind = p.kind or "normal",
-			waitSec = p.waitSec or 0,
-			modes = modesCopy(p.modes),
-		}
+		t[i] = { cf = p.cf, kind = p.kind or "normal", waitSec = p.waitSec or 0, modes = modesCopy(p.modes) }
 	end
 	return t
 end
@@ -132,9 +115,6 @@ local function pushUndo()
 	redoStack = {}
 end
 
--- ==========================================
--- UI HELPERS
--- ==========================================
 local function corner(o, r)
 	Instance.new("UICorner", o).CornerRadius = UDim.new(0, r or 8)
 end
@@ -212,6 +192,3 @@ local function section(parent, title, order)
 	titleL.LayoutOrder = 0
 	return f
 end
-
--- ==========================================
--- M
